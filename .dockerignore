@@ -1,0 +1,43 @@
+# Environnement virtuel Python
+env/
+venv/
+__pycache__/
+*.pyc
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Fichiers de configuration locale
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Garder app.env pour la copie
+!app.env
+
+# Documentation
+README.md
+*.md
+
+# Tests
+tests/
+test_*
+
+# Alembic cache
+alembic/__pycache__/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore 
