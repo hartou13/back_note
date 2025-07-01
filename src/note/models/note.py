@@ -12,7 +12,7 @@ class Note(Base):
     title = Column(String(255))
     content = Column(Text)
     user_id = Column(String(36))
-    project_id = Column(String(36), ForeignKey("projects.id"))
+    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"))
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     
     project = relationship("Project", backref="notes")

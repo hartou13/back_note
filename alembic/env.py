@@ -11,6 +11,8 @@ from src.logs.models.log import Log
 from src.users.models.user_active_token import UserActiveToken
 from src.project.models.project import Project
 from src.note.models.note import Note
+from src.tag.models.tag import Tag
+from src.tag.models.note_tag import NoteTag
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
