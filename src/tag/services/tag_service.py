@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from src.tag.models.tag import Tag
 from src.database.mysql_connector import get_db
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from src.tag.dto.tag import CreateTagDto
 
 async def create_tag_service(tag: CreateTagDto, user_id: str):
@@ -43,7 +43,7 @@ async def delete_tag_service(tag_id: str, user_id: str):
         tag = await db.scalar(select(Tag).where(Tag.id == tag_id, Tag.user_id == user_id))
         if not tag:
             raise HTTPException(status_code=404, detail="Tag not found")
-        await db.delete(tag)
+        await db.execute(delete(Tag).where(Tag.id == tag_id))
         await db.commit()
         return tag
     

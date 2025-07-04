@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from src.database.mysql_connector import get_db
 from src.note.dto.note import CreateNoteDto
 from src.note.models.note import Note
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import joinedload
 
 from src.tag.models.note_tag import NoteTag
@@ -18,6 +18,7 @@ async def create_note_service(note: CreateNoteDto, user_id: str):
             content=note.content,
             user_id=user_id,
             project_id=note.project_id,
+            hidden=note.hidden,
         )
         db.add(new_note)
         await db.commit()
@@ -35,6 +36,7 @@ async def update_note_service(note_id: str, note: CreateNoteDto, user_id: str):
         existing_note.title = note.title
         existing_note.content = note.content
         existing_note.project_id = note.project_id
+        existing_note.hidden = note.hidden
         await db.commit()
         await db.refresh(existing_note)
         if note.tags:
@@ -46,7 +48,7 @@ async def delete_note_service(note_id: str, user_id: str):
         note = await db.scalar(select(Note).where(Note.id == note_id, Note.user_id == user_id))
         if not note:
             raise HTTPException(status_code=404, detail="Note not found")
-        await db.delete(note)
+        await db.execute(delete(Note).where(Note.id == note_id))
         await db.commit()
         return note
     

@@ -14,7 +14,7 @@ class Note(Base):
     user_id = Column(String(36))
     project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"))
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
-    
+    hidden = Column(Boolean, default=False)
     project = relationship("Project", backref="notes")
 
 

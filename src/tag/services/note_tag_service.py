@@ -31,7 +31,7 @@ async def untag_note_service(note_id: str, tag_id: str, user_id: str):
         await db.commit()
         return note_tag
 
-async def clear_note_taga_service(note_id: str, current_user_id:str):
+async def clear_note_tag_service(note_id: str, current_user_id:str):
     await check_note_ownership(note_id, current_user_id)
     async with get_db() as db:
         note_tags = await db.scalars(select(NoteTag).where(NoteTag.note_id == note_id))
@@ -42,7 +42,7 @@ async def clear_note_taga_service(note_id: str, current_user_id:str):
 
 async def set_note_tags_service(note_id: str, tag_ids: list[str], current_user_id: str):
     await check_note_ownership(note_id, current_user_id)
-    await clear_note_taga_service(note_id, current_user_id)
+    await clear_note_tag_service(note_id, current_user_id)
     for tag_id in tag_ids:
         await tag_note_service(note_id, tag_id, current_user_id)
     return await get_note_service(note_id, current_user_id)
