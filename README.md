@@ -20,18 +20,10 @@ Suivez les étapes ci-dessous pour configurer votre environnement :
    alembic -c alembic.ini revision --autogenerate -m "description of your changes"
    ```
 
-   ```bash
-   alembic -c alembic_shared.ini revision --autogenerate -m "description of your changes"
-   ```
-
 4. Executer la mise à jour de votre base de données :
 
    ```bash
    alembic -c alembic.ini upgrade head
-   ```
-
-   ```bash
-   alembic -c alembic_shared.ini upgrade head
    ```
 
 5. Lancer l'application (pour le moment):

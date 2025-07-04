@@ -38,7 +38,7 @@ async def startup():
             print("Connected to MySQL database", flush=True)
             break  # Si la connexion est réussie, sortez de la boucle
         except Exception as e:
-            raise e
+            # raise e
             print(f"Error connecting to MySQL database: {e}", flush=True)
             await asyncio.sleep(5)  # Attendez 5 secondes avant de réessayer
 
