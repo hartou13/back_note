@@ -1,9 +1,11 @@
+from typing import List
 from fastapi import HTTPException
+from src.project.models.project import Project
 from src.database.mysql_connector import get_db
 from src.note.dto.note import CreateNoteDto
 from src.note.models.note import Note
-from sqlalchemy import select, delete
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, delete, func, or_
+from sqlalchemy.orm import joinedload, load_only
 
 from src.tag.models.note_tag import NoteTag
 
@@ -62,11 +64,35 @@ async def get_note_service(note_id: str, user_id: str):
 async def get_notes_service(user_id: str):
     async with get_db() as db:
         notes = await db.scalars(select(Note).options(
-            joinedload(Note.project),
+            joinedload(Note.project).options(load_only(Project.id, Project.name, Project.color)),
             joinedload(Note.tags).joinedload(NoteTag.tag)
         ).where(Note.user_id == user_id).order_by(Note.created_at.desc()))
         return notes.unique().all()
     
+async def search_notes_service(query: str, user_id: str, page: int=0, page_size: int=10, project_id: str=None, tag_ids: List[str]=[]):
+    async with get_db() as db:
+        filters = [Note.user_id == user_id]
+        if query:
+            filters.append(or_(Note.title.ilike(f"%{query}%"), Note.content.ilike(f"%{query}%")))
+        if project_id:
+            filters.append(Note.project_id == project_id)
+        if tag_ids:
+            filters.append(Note.tags.any(NoteTag.tag_id.in_(tag_ids)))
+        notes = await db.scalars(select(Note).options(
+            joinedload(Note.project).options(load_only(Project.id, Project.name, Project.color)),
+            joinedload(Note.tags).joinedload(NoteTag.tag)
+        ).where(*filters).order_by(Note.created_at.desc()).limit(page_size).offset(page * page_size))
+        notes = notes.unique().all()
+        count = await db.scalar(select(func.count()).select_from(Note).where(*filters))
+        return {
+            "data": notes,
+            "pagination": {
+                "total": count,
+                "page": page,
+                "pageSize": page_size
+            }
+        }
+    # 695000
 async def get_notes_by_project_service(project_id: str, user_id: str):
     async with get_db() as db:
         notes = await db.scalars(select(Note).where(Note.project_id == project_id, Note.user_id == user_id))

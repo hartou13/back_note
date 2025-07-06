@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from typing import List
+from fastapi import APIRouter, Depends, Query
 
 from src.note.dto.note import CreateNoteDto
-from src.note.services.note import create_note_service, delete_note_service, get_note_service, get_notes_by_project_service, get_notes_service, update_note_service
+from src.note.services.note import create_note_service, delete_note_service, get_note_service, get_notes_by_project_service, get_notes_service, update_note_service, search_notes_service
 from src.project.dto.project import CreateProjectDto
 from src.project.services.project_service import create_project_service, delete_project_service, get_project_service, get_projects_service, update_project_service
 from src.users.services.user_service import find_user_service, get_current_user
@@ -40,8 +41,18 @@ async def get_note(note_id: str, current_user: str = Depends(get_current_user)):
     return note
 
 @router.get("")
-async def get_notes(current_user: str = Depends(get_current_user)):
-    notes = await get_notes_service(current_user)
+async def get_notes(
+    page: int = Query(None, description="Numéro de page"),
+    page_size: int = Query(3, description="Taille de la page"),
+    query: str = Query("", description="Terme de recherche"),
+    project_id: str = Query(None, description="ID du projet"),
+    tag_ids: List[str] = Query(None, description="Liste des IDs de tags"),
+    current_user: str = Depends(get_current_user)
+):
+    if page is not None:
+        notes = await search_notes_service(query, current_user, page=page, page_size=page_size, project_id=project_id, tag_ids=tag_ids or [])
+    else:
+        notes = await get_notes_service(current_user)
     return notes
 
 @router.delete("/{note_id}")
