@@ -43,7 +43,7 @@ async def get_note(note_id: str, current_user: str = Depends(get_current_user)):
 @router.get("")
 async def get_notes(
     page: int = Query(None, description="Numéro de page"),
-    page_size: int = Query(3, description="Taille de la page"),
+    page_size: int = Query(10, description="Taille de la page"),
     query: str = Query("", description="Terme de recherche"),
     project_id: str = Query(None, description="ID du projet"),
     tag_ids: List[str] = Query(None, description="Liste des IDs de tags"),
