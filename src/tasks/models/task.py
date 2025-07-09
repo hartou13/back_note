@@ -22,6 +22,7 @@ class Task(Base):
     project_id = Column(String(36), ForeignKey("projects.id"), nullable=False)
     mother_task_id = Column(String(36), ForeignKey("tasks.id"))
     status = Column(SmallInteger, default=TaskStatus.TODO.value)
+    priority = Column(SmallInteger, default=1)
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
     updated_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
     mother_task = relationship("Task", 

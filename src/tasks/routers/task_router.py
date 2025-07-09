@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from src.tasks.dto.task_dto import CreateTaskDto, UpdateTaskDto
-from src.tasks.services.task_service import create_task_service, delete_task_service, get_task_service, get_tasks_service, update_task_service
+from src.tasks.services.task_service import create_task_service, delete_task_service, get_main_tasks_service, get_task_service, get_tasks_service, update_task_service
 from src.users.services.user_service import get_current_user
 
 router = APIRouter(
@@ -17,7 +17,7 @@ async def create_task(task: CreateTaskDto, current_user: str = Depends(get_curre
 
 @router.get("")
 async def get_tasks(current_user: str = Depends(get_current_user)):
-    tasks = await get_tasks_service(current_user)
+    tasks = await get_main_tasks_service(current_user)
     return tasks
 
 @router.put("/{task_id}")

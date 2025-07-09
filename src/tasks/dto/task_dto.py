@@ -9,6 +9,7 @@ class CreateTaskDto(BaseModel):
     project_id: str = Field(..., description="The project_id field is required")
     mother_task_id: Optional[str] = Field(None, description="The mother_task_id field is required")
     # status: TaskStatus = Field(..., description="The status field is required")
+    priority: Optional[int] = Field(None, description="The priority field is required")
     
 class UpdateTaskDto(BaseModel):
     name: Optional[str] = Field(None, description="The name field is required")
@@ -16,3 +17,4 @@ class UpdateTaskDto(BaseModel):
     project_id: Optional[str] = Field(None, description="The project_id field is required")
     mother_task_id: Optional[str] = Field(None, description="The mother_task_id field is required")
     status: Optional[TaskStatus] = Field(None, description="The status field is required")
+    priority: Optional[int] = Field(None, description="The priority field is required")
