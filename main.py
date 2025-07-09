@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from src.note.routers import note_router
 from src.project.routers import project_router
 from src.tag.routers import tag_router
+from src.tasks.routers import task_router
 from src.auth.services.auth_service import checkToken
 from src.database.mysql_global import set_ip_address
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,6 +49,7 @@ app.include_router(user_router.router)
 app.include_router(project_router.router)
 app.include_router(note_router.router)
 app.include_router(tag_router.router)
+app.include_router(task_router.router)
 @app.middleware("http")
 async def verify_token(request: Request, call_next):
     # print(request)

@@ -13,6 +13,7 @@ from src.project.models.project import Project
 from src.note.models.note import Note
 from src.tag.models.tag import Tag
 from src.tag.models.note_tag import NoteTag
+from src.tasks.models.task import Task
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
