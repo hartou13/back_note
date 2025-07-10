@@ -31,6 +31,10 @@ async def create_task_service(task_dto: CreateTaskDto, user_id: str):
         )
         db.add(task)
         await db.commit()
+        task = await db.scalar(select(Task).options(
+            joinedload(Task.project).options(load_only(Project.id, Project.name, Project.color)),
+            # joinedload(Task.daughters).options(joinedload(Task.project).options(load_only(Project.id, Project.name, Project.color)))
+        ).where(Task.id == task.id))
         return task
 
 async def get_task_service(task_id: str, user_id: str):
