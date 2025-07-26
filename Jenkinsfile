@@ -66,6 +66,13 @@ pipeline {
                     
                     // Start the services
                     sh 'docker-compose up -d'
+                    
+                    // Copy .env file and restart backend
+                    sh '''
+                        docker cp .env myauxilium_backend:/app/.env
+                        docker restart myauxilium_backend
+                        sleep 15
+                    '''
                 }
             }
         }
@@ -73,7 +80,7 @@ pipeline {
         stage('Health Check') {
             steps {
                 script {
-                    sh 'sleep 20'
+                    sh 'sleep 30'
                     sh 'curl -f http://localhost:8000/health-check'
                 }
             }
