@@ -17,7 +17,14 @@ pipeline {
             steps {
                 script {
                     echo 'Stopping existing containers...'
-                    sh 'docker-compose -f docker-compose.yml down --remove-orphans'
+                    sh '''
+                        # Force stop and remove containers by name if they exist
+                        docker stop myauxilium_backend myauxilium_mysql 2>/dev/null || true
+                        docker rm myauxilium_backend myauxilium_mysql 2>/dev/null || true
+                        
+                        # Then run docker-compose down to clean up networks and volumes
+                        docker-compose down --remove-orphans || true
+                    '''
                 }
             }
         }
