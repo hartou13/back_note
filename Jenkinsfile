@@ -73,7 +73,7 @@ pipeline {
                         docker cp .env myauxilium_backend:/app/.env
                         echo "Environment file copied to container"
                         
-                        // Verify environment variables are loaded
+                        # Verify environment variables are loaded
                         echo "Verifying environment variables in container..."
                         docker exec myauxilium_backend env | grep -E "(MYSQL|JWT)" || echo "No environment variables found"
                     '''
