@@ -73,9 +73,20 @@ pipeline {
                         docker cp .env myauxilium_backend:/app/.env
                         echo "Environment file copied to container"
                         
+                        # Restart the backend container to reload environment variables
+                        echo "Restarting backend container to reload environment..."
+                        docker restart myauxilium_backend
+                        
+                        # Wait for container to be ready
+                        sleep 10
+                        
                         # Verify environment variables are loaded
                         echo "Verifying environment variables in container..."
                         docker exec myauxilium_backend env | grep -E "(MYSQL|JWT)" || echo "No environment variables found"
+                        
+                        # Alternative: Check if .env file is readable in container
+                        echo "Checking .env file in container:"
+                        docker exec myauxilium_backend cat /app/.env || echo "No .env file found"
                     '''
                 }
             }
