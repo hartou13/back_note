@@ -38,43 +38,7 @@ pipeline {
                 }
             }
         }
-        
-        stage('Database Migration') {
-            steps {
-                script {
-                    echo 'Performing database migrations...'
-                    
-                    // 1. Erase the content of the folder alembic/versions
-                    sh '''
-                        echo "Clearing alembic/versions folder..."
-                        rm -rf alembic/versions/*
-                        echo "alembic/versions folder cleared"
-                    '''
-                    
-                    // 2. Log into mysql and erase the content of the table "alembic_version"
-                    sh '''
-                        echo "Clearing alembic_version table..."
-                        mysql -h localhost -P 3306 -u root -p rootpassword myauxilium -e "DELETE FROM alembic_version;"
-                        echo "alembic_version table cleared"
-                    '''
-                    
-                    // 3a. Generate new migration
-                    sh '''
-                        echo "Generating new migration..."
-                        alembic -c alembic.ini revision --autogenerate -m "Automated migration"
-                        echo "Migration generated successfully"
-                    '''
-                    
-                    // 3b. Apply migration
-                    sh '''
-                        echo "Applying migration..."
-                        alembic -c alembic.ini upgrade head
-                        echo "Migration applied successfully"
-                    '''
-                }
-            }
-        }
-        
+                
         stage('Build and Deploy') {
             steps {
                 script {
@@ -122,6 +86,42 @@ pipeline {
                                 sleep 10
                             fi
                         done
+                    '''
+                }
+            }
+        }
+
+        stage('Database Migration') {
+            steps {
+                script {
+                    echo 'Performing database migrations...'
+                    
+                    // 1. Erase the content of the folder alembic/versions
+                    sh '''
+                        echo "Clearing alembic/versions folder..."
+                        rm -rf alembic/versions/*
+                        echo "alembic/versions folder cleared"
+                    '''
+                    
+                    // 2. Log into mysql and erase the content of the table "alembic_version"
+                    sh '''
+                        echo "Clearing alembic_version table..."
+                        mysql -h localhost -P 3306 -u root -p rootpassword myauxilium -e "DELETE FROM alembic_version;"
+                        echo "alembic_version table cleared"
+                    '''
+                    
+                    // 3a. Generate new migration
+                    sh '''
+                        echo "Generating new migration..."
+                        alembic -c alembic.ini revision --autogenerate -m "Automated migration"
+                        echo "Migration generated successfully"
+                    '''
+                    
+                    // 3b. Apply migration
+                    sh '''
+                        echo "Applying migration..."
+                        alembic -c alembic.ini upgrade head
+                        echo "Migration applied successfully"
                     '''
                 }
             }
