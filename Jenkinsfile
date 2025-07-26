@@ -112,14 +112,6 @@ pipeline {
                 script {
                     echo 'Performing database migrations...'
                     
-                    // Verify environment file is available in container
-                    sh '''
-                        echo "Checking environment file in backend container..."
-                        docker exec myauxilium_backend ls -la /app/.env
-                        echo "Environment file content in container:"
-                        docker exec myauxilium_backend cat /app/.env
-                    '''
-                    
                     // 1. Erase the content of the folder alembic/versions
                     sh '''
                         echo "Clearing alembic/versions folder..."
@@ -130,7 +122,7 @@ pipeline {
                     // 2. Log into mysql and erase the content of the table "alembic_version"
                     sh '''
                         echo "Clearing alembic_version table..."
-                        docker exec myauxilium_mysql mysql -u root -p rootpassword myauxilium -e "DELETE FROM alembic_version;"
+                        docker exec myauxilium_mysql mysql -u root -prootpassword myauxilium -e "DELETE FROM alembic_version;"
                         echo "alembic_version table cleared"
                     '''
                     
