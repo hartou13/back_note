@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     echo 'Stopping existing containers...'
-                    sh 'docker-compose down --remove-orphans'
+                    sh 'docker-compose -f docker-compose.yml down --remove-orphans'
                 }
             }
         }
@@ -39,14 +39,21 @@ pipeline {
             }
         }
                 
-        stage('Build and Deploy') {
+        stage('Build') {
             steps {
                 script {
-                    echo 'Building and starting containers...'
+                    echo 'Building containers...'
                     
-                    // Pull latest images and build
-                    // sh 'docker-compose pull'
+                    // Build the containers
                     sh 'docker-compose build --no-cache'
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'Starting containers...'
                     
                     // Start the services
                     sh 'docker-compose up -d'
