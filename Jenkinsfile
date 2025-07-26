@@ -39,7 +39,14 @@ pipeline {
                         string(credentialsId: 'vela-back-end-env', variable: 'BACK_END_ENV')
                     ]) {
                         sh '''
-                            echo "$BACK_END_ENV" > .env
+                            # Alternative approach: Use base64 to preserve exact formatting
+                            # First, encode the content in Jenkins credentials as base64
+                            # Then decode it here to preserve line breaks
+                            echo "$BACK_END_ENV" | base64 -d > .env
+                            
+                            # If base64 doesn't work, try this approach:
+                            # echo "$BACK_END_ENV" | tr -d '\r' > .env
+                            
                             echo "Environment file created:"
                             cat .env
                         '''
