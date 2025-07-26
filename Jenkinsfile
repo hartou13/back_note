@@ -122,7 +122,7 @@ pipeline {
                     // 2. Log into mysql and erase the content of the table "alembic_version"
                     sh '''
                         echo "Clearing alembic_version table..."
-                        docker exec myauxilium_mysql mysql -u root -prootpassword myauxilium -e "DELETE FROM alembic_version;"
+                        docker exec myauxilium_mysql mysql -u root -prootpassword myauxilium -e "DROP TABLE IF EXISTS alembic_version;"
                         echo "alembic_version table cleared"
                     '''
                     
