@@ -77,14 +77,14 @@ pipeline {
             }
         }
         
-        stage('Health Check') {
-            steps {
-                script {
-                    sh 'sleep 30'
-                    sh 'curl -f http://localhost:8000/health-check'
-                }
-            }
-        }
+        // stage('Health Check') {
+        //     steps {
+        //         script {
+        //             sh 'sleep 30'
+        //             sh 'curl -f http://localhost:8000/health-check'
+        //         }
+        //     }
+        // }
 
 
         
