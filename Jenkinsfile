@@ -40,6 +40,8 @@ pipeline {
                     ]) {
                         sh '''
                             echo "$BACK_END_ENV" > .env
+                            echo "Environment file created:"
+                            cat .env
                         '''
                     }
                 }
@@ -74,7 +76,7 @@ pipeline {
                     echo 'Performing health checks...'
                     
                     // Wait for services to be ready
-                    sh 'sleep 30'
+                    sh 'sleep 20'
                     
                     // Check if the backend is responding
                     sh '''
@@ -109,6 +111,14 @@ pipeline {
             steps {
                 script {
                     echo 'Performing database migrations...'
+                    
+                    // Verify environment file is available in container
+                    sh '''
+                        echo "Checking environment file in backend container..."
+                        docker exec myauxilium_backend ls -la /app/.env
+                        echo "Environment file content in container:"
+                        docker exec myauxilium_backend cat /app/.env
+                    '''
                     
                     // 1. Erase the content of the folder alembic/versions
                     sh '''
