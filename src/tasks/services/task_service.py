@@ -90,6 +90,7 @@ async def update_task_service(task_id: str, task_dto: UpdateTaskDto, user_id: st
             existing_task.project_id = task_dto.project_id
         if task_dto.status:
             if task_dto.status == TaskStatus.DONE:
+                existing_task.finished_at = datetime.now()
                 await propagate_status_to_daughters(task_id, task_dto.status)
             existing_task.status = task_dto.status.value
         if task_dto.priority:
@@ -121,5 +122,13 @@ async def propagate_status_to_daughters(task_id: str, new_status: TaskStatus):
             await propagate_status_to_daughters(daughter.id, new_status)
         await db.commit()
 
-#TODO: tags
+async def get_history_service(user_id: str, month: int, year: int):
+    start_date = datetime(year, month, 1)
+    end_date = datetime(year + (month == 12), (month % 12) + 1, 1)
+    async with get_db() as db:
+        history = await db.scalars(select(Task).options(
+            joinedload(Task.project).options(load_only(Project.id, Project.name, Project.color))
+        ).where(Task.user_id == user_id, Task.status == TaskStatus.DONE.value, Task.finished_at != None, Task.finished_at >= start_date, Task.finished_at < end_date).order_by(Task.finished_at.desc()))
+        return history.unique().all()
+
 #TODO: due dates

@@ -25,6 +25,7 @@ class Task(Base):
     priority = Column(SmallInteger, default=1)
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
     updated_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
+    finished_at = Column(DateTime, nullable=True)
     mother_task = relationship("Task", 
         backref="daughters",
         remote_side=[id],
