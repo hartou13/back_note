@@ -83,8 +83,40 @@ pipeline {
         stage('Health Check') {
             steps {
                 script {
-                    sh 'sleep 10'
+                    // sh 'sleep 10'
                     sh 'curl -f http://localhost:8000/health-check || echo "Health check failed, but continuing..."'
+                }
+            }
+        }
+        
+        stage('Database Migration Setup') {
+            steps {
+                script {
+                    // Wait a bit more to ensure database is fully ready
+                    sh 'sleep 10'
+                    
+                    // 1. Erase the content of the folder alembic/versions in the myauxilium_backend container
+                    sh '''
+                        docker exec myauxilium_backend rm -rf /app/alembic/versions/*
+                        docker exec myauxilium_backend ls -la /app/alembic/versions/ || true
+                    '''
+                    
+                    // 2. Erase the content of the table alembic_versions in the myauxilium_mysql container
+                    sh '''
+                        docker exec myauxilium_mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "DELETE FROM alembic_versions;" ${MYSQL_DATABASE} || true
+                    '''
+                }
+            }
+        }
+        
+        stage('Database Migration') {
+            steps {
+                script {
+                    // 3. Run alembic commands consecutively in the myauxilium_backend container
+                    sh '''
+                        docker exec myauxilium_backend alembic -c alembic.ini revision --autogenerate -m "Auto-generated migration from Jenkins deployment"
+                        docker exec myauxilium_backend alembic -c alembic.ini upgrade head
+                    '''
                 }
             }
         }
