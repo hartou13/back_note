@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from src.project.models.project import Project
 from src.database.mysql_connector import get_db
@@ -90,7 +90,7 @@ async def update_task_service(task_id: str, task_dto: UpdateTaskDto, user_id: st
             existing_task.project_id = task_dto.project_id
         if task_dto.status:
             if task_dto.status == TaskStatus.DONE:
-                existing_task.finished_at = datetime.now()
+                existing_task.finished_at = datetime.now(timezone.utc)
                 await propagate_status_to_daughters(task_id, task_dto.status)
             existing_task.status = task_dto.status.value
         if task_dto.priority:
