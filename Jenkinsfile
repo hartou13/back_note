@@ -104,8 +104,9 @@ pipeline {
                     
                     // 1. Erase the content of the folder alembic/versions in the myauxilium_backend container
                     sh '''
-                        echo "=== Attempting to remove migration files ==="
-                        docker exec --user root myauxilium_backend rm -f /app/alembic/versions/*.py || echo "rm *.py failed"
+                        echo "=== Removing and recreating alembic versions directory ==="
+                        docker exec --user root myauxilium_backend rm -rf /app/alembic/versions
+                        docker exec --user root myauxilium_backend mkdir -p /app/alembic/versions
                         docker exec myauxilium_backend ls -la /app/alembic/versions/ || true
                     '''
                     
