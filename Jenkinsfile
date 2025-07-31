@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    parameters {
+        booleanParam(defaultValue: true, description: 'Run database migrations', name: 'RUN_MIGRATIONS')
+    }
+    
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         ENV_FILE = '.env'
@@ -90,6 +94,9 @@ pipeline {
         }
         
         stage('Database Migration Setup') {
+            when {
+                expression { params.RUN_MIGRATIONS == true }
+            }
             steps {
                 script {
                     // Wait a bit more to ensure database is fully ready
@@ -110,6 +117,9 @@ pipeline {
         }
         
         stage('Database Migration') {
+            when {
+                expression { params.RUN_MIGRATIONS == true }
+            }
             steps {
                 script {
                     // 3. Run alembic commands consecutively in the myauxilium_backend container
