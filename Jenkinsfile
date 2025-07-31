@@ -104,13 +104,16 @@ pipeline {
                     
                     // 1. Erase the content of the folder alembic/versions in the myauxilium_backend container
                     sh '''
-                        docker exec myauxilium_backend rm -rf /app/alembic/versions/*
+                        echo "=== Attempting to remove migration files ==="
+                        docker exec myauxilium_backend rm -f /app/alembic/versions/*.py || echo "rm *.py failed"
                         docker exec myauxilium_backend ls -la /app/alembic/versions/ || true
                     '''
                     
                     // 2. Erase the content of the table alembic_versions in the myauxilium_mysql container
                     sh '''
-                        docker exec myauxilium_mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "DELETE FROM alembic_versions;" ${MYSQL_DATABASE} || true
+                        # Source the .env file to get the MySQL variables
+                        export $(cat .env | grep -E '^(MYSQL_PASSWORD|MYSQL_DATABASE)=' | xargs)
+                        docker exec myauxilium_mysql mysql -u root -p"$MYSQL_PASSWORD" -e "DELETE FROM alembic_versions;" "$MYSQL_DATABASE" || true
                     '''
                 }
             }
