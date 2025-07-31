@@ -128,7 +128,7 @@ async def get_history_service(user_id: str, month: int, year: int):
     async with get_db() as db:
         history = await db.scalars(select(Task).options(
             joinedload(Task.project).options(load_only(Project.id, Project.name, Project.color))
-        ).where(Task.user_id == user_id, Task.status == TaskStatus.DONE.value, Task.finished_at != None, Task.finished_at >= start_date, Task.finished_at < end_date).order_by(Task.finished_at.desc()))
+        ).where(Task.user_id == user_id, Task.status == TaskStatus.DONE.value, Task.finished_at != None, Task.finished_at >= start_date, Task.finished_at < end_date).order_by(Task.finished_at.asc()))
         return history.unique().all()
 
 #TODO: due dates
