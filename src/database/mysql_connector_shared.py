@@ -12,7 +12,10 @@ dbname = os.environ.get("MYSQL_DATABASE_SHARED")
 dbhost = mysql_global.ip_address
 dbuser = os.environ.get("MYSQL_USER_SHARED")
 dbpassword = os.environ.get("MYSQL_PASSWORD_SHARED")
-DATABASE_URL = f"mysql+aiomysql://{dbuser}:{dbpassword}@{dbhost}/{dbname}"
+DATABASE_URL = (
+    f"mysql+aiomysql://{dbuser}:{dbpassword}@{dbhost}/{dbname}"
+    "?allow_public_key_retrieval=true"
+)
 
 Base_shared = declarative_base()
 

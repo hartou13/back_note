@@ -19,7 +19,10 @@ dbport = os.environ.get("MYSQL_PORT")
 dbuser = os.environ.get("MYSQL_USER")
 dbpassword = os.environ.get("MYSQL_PASSWORD")
 # print(f"dbname: {dbname}, dbhost: {dbhost}, dbuser: {dbuser}, dbpassword: {dbpassword}")
-DATABASE_URL = f"mysql+aiomysql://{dbuser}:{dbpassword}@{dbhost}:{dbport}/{dbname}"
+DATABASE_URL = (
+    f"mysql+aiomysql://{dbuser}:{dbpassword}@{dbhost}:{dbport}/{dbname}"
+    # "?allow_public_key_retrieval=true"
+)
 print(f"DATABASE_URL: {DATABASE_URL}", flush=True)
 
 Base = declarative_base()

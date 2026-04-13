@@ -10,9 +10,6 @@ from src.tasks.dto.task_dto import CreateTaskDto, UpdateTaskDto
 
 async def create_task_service(task_dto: CreateTaskDto, user_id: str):
     async with get_db() as db:
-        existing_task = await db.scalar(select(Task).where(Task.name == task_dto.name, Task.user_id == user_id, Task.project_id == task_dto.project_id))
-        if existing_task:
-            raise HTTPException(status_code=400, detail="Task already exists")
         if task_dto.mother_task_id:
             mother_task = await db.scalar(select(Task).where(Task.id == task_dto.mother_task_id, Task.user_id == user_id))
             if not mother_task:

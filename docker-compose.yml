@@ -4,20 +4,20 @@ services:
   # Service MySQL
   mysql:
     image: mysql:8.0
-    container_name: myauxilium_mysql
+    container_name: vela_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: myauxilium
-      MYSQL_USER: myauxilium_user
-      MYSQL_PASSWORD: myauxilium_password
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: vela_db
+      MYSQL_USER: vela_user
+      MYSQL_PASSWORD: 12345678
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-      - myauxilium_network
+      - vela_network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 30s
@@ -30,15 +30,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: myauxilium_backend
+    container_name: vela_backend
     restart: always
     ports:
       - "8000:8000"
     depends_on:
       mysql:
         condition: service_healthy
+    environment:
+      # Host .env uses 127.0.0.1:3307 for local runs; inside Compose use the service name and internal port.
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
     networks:
-      - myauxilium_network
+      - vela_network
     volumes:
       - .:/app
     working_dir: /app
@@ -50,5 +54,5 @@ volumes:
     driver: local
 
 networks:
-  myauxilium_network:
+  vela_network:
     driver: bridge 
